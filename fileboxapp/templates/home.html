@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        table, th, td {
+        border: 1px solid;
+        }
+        body{
+        background-color: coral;
+        }
+    </style>
+</head>
+<body>
+<div align="center">
+  <h1>Please Upload the File here</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form_key.as_p }}
+        <button type="submit">Upload</button>
+    </form>
+    <h2>List of files uploaded</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Uploaded Time</th>
+            <th>Updated Time</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <!-- iterating here to retrieve dynamic values-->
+            <td>abc</td>
+            <td>def</td>
+            <td>cgh</td>
+            <td>fhoijwf</td>
+            <td>download</td>
+            <td><button type="button">Update</button></td>
+            <td><button type="button">Delete</button></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
