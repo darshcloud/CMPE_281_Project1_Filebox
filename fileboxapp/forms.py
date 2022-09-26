@@ -7,12 +7,12 @@ from django.forms import PasswordInput
 # code representation of the form
 
 class LoginForm(forms.Form):
-    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter the username'}))
+    username = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Enter the username'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter the password'}))
 
     def clean_username(self):
         data = self.cleaned_data['username']
-        # check for username data and
+        # check for username validation
         return data
 
     def clean_password(self):
@@ -24,7 +24,7 @@ class LoginForm(forms.Form):
 class RegisterForm(forms.Form):
     firstname = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter your first name'}))
     lastname = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter your last name'}))
-    email = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter your email address'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Enter your email address'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter the password'}))
 
     def clean_firstname(self):
