@@ -8,11 +8,11 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from backendapp.filebox_s3_storage import FileStorage
 from backendapp.models import Files
 from datetime import datetime
-import boto3
+from rest_framework.permissions import IsAuthenticated
 
 
 # Create your views here.
-class RegisterView(APIView):
+class RegisterUserView(APIView):
     def post(self, request):
         username = request.data['username']
         firstname = request.data['firstname']
@@ -27,27 +27,19 @@ class RegisterView(APIView):
                          'message': 'User Registered Successfully'})
 
 
-class UploadFileView(APIView):
+class FilesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        # if request.user.is_authenticated():
-        username = 'darshini'
+        username = request.user.username
         data = request.POST
-        file_obj = request.FILES.get('file_data')
+        file_obj = request.FILES.get('file')
         file_description = data['file_description']
         # upload to S3
         directory_path_in_bucket = "filebox_files/{username}".format(username=username)
         file_path_in_bucket = '/'.join([directory_path_in_bucket, file_obj.name])
         file_storage = FileStorage()
-        # options = {
-        #     "Metadata": {
-        #         "description": file_description,
-        #         "created_time": str(datetime.now()),
-        #         "updated_time": str(datetime.now())
-        #     }
-        # }
-        # file_storage.object_parameters.update(options)
         file_details = Files(
             file_key=file_path_in_bucket,
             username=username,
@@ -60,6 +52,7 @@ class UploadFileView(APIView):
 
             return Response({
                 'result': 'success',
+                'message': 'File uploaded successfully',
                 'fileUrl': file_url,
             })
         else:
@@ -71,40 +64,23 @@ class UploadFileView(APIView):
                 ),
             }, status=400)
 
-
-class ListFilesView(APIView):
-
     def get(self, request):
-        username = 'darshini'
+        username = request.user.username
         files_data = {}
         files = Files.objects.filter(username=username)
+        file_storage = FileStorage()
         for file in files:
-            files_data[file.file_key] = {
+            files_data[file.file_key.split('/')[-1]] = {
                 'file_description': file.file_description,
                 'created_time': file.created_time,
-                'updated_time': file.updated_time
+                'updated_time': file.updated_time,
+                'file_url': file_storage.url(file.file_key)
             }
-        # file_storage = FileStorage()
-        # directory_path_in_bucket = '/'.join(["filebox_files", username])
-        # dirs, files = file_storage.listdir(directory_path_in_bucket)
-        # s3_resource = boto3.resource("s3")
-        # files_data = {}
-        # for file in files:
-        #     s3_obj = s3_resource.Object('filebox-company-primary', '/'.join([directory_path_in_bucket, file]))
-        #     metadata = s3_obj.metadata
-        #     files_data[file] = {
-        #         'description': metadata.get('description'),
-        #         'created_time': metadata.get('created_time'),
-        #         'updated_time': metadata.get('updated_time')
-        #     }
         return Response(files_data)
-
-
-class DeleteFileView(APIView):
 
     def delete(self, request):
         file_storage = FileStorage()
-        username = 'darshini'
+        username = request.user.username
         filename = request.data['filename']
         directory_path_in_bucket = "filebox_files/{username}".format(username=username)
         file_path_in_bucket = '/'.join([directory_path_in_bucket, filename])
@@ -113,28 +89,16 @@ class DeleteFileView(APIView):
         return Response({'result': 'success',
                          'message': 'File successfully deleted'})
 
-
-class UpdateFileView(APIView):
-    parser_classes = [MultiPartParser, FormParser]
-
-    def post(self, request):
-        username = 'darshini'
+    def put(self, request):
+        username = request.user.username
         data = request.POST
-        file_obj = request.FILES.get('file_data') if "file_data" in request.FILES else None
+        file_obj = request.FILES.get('file') if "file" in request.FILES else None
         file_description = data['file_description']
         filename = data['filename']
         directory_path_in_bucket = "filebox_files/{username}".format(username=username)
         file_path_in_bucket = '/'.join([directory_path_in_bucket, filename])
         if file_obj:
-            # upload to S3
             file_storage = FileStorage()
-            # options = {
-            #     "Metadata": {
-            #         "description": file_description,
-            #         "updated_time": str(datetime.now())
-            #     }
-            # }
-            # file_storage.object_parameters.update(options)
             file_storage.save(file_path_in_bucket, file_obj)
         file_data = Files.objects.get(file_key=file_path_in_bucket)
         file_data.file_description = file_description

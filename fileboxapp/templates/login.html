@@ -14,7 +14,7 @@
     <!-- add the username and password textbox-->
     <form action="" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form_key.as_p }}
         <button type="submit">Login</button>
     </form>
     <p>Don't have an account?<a href="register/">Register here</a></p>

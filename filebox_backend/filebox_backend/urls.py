@@ -16,12 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from backendapp import views
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('register/', views.RegisterView.as_view(), name='register'),
-    path('upload/', views.UploadFileView.as_view(), name='upload'),
-    path('list/', views.ListFilesView.as_view(), name='list'),
-    path('delete/', views.DeleteFileView.as_view(), name='delete'),
-    path('update/', views.UpdateFileView.as_view(), name='update')
+    path('user/register/', views.RegisterUserView.as_view(), name='register'),
+    path('user/authorize/', obtain_auth_token, name='authorize'),
+    path('api/files/', views.FilesView.as_view(), name='files')
 ]

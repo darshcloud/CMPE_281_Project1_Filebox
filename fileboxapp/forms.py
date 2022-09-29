@@ -12,12 +12,10 @@ class LoginForm(forms.Form):
 
     def clean_username(self):
         data = self.cleaned_data['username']
-        # check for username validation
         return data
 
     def clean_password(self):
         data = self.cleaned_data['password']
-        # check for password validation
         return data
 
 
@@ -46,7 +44,7 @@ class RegisterForm(forms.Form):
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
-    file_description = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter file description'}))
+    file_description = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter file description'}))
 
     def clean_file(self):
         data = self.cleaned_data['file']
@@ -59,7 +57,8 @@ class UploadFileForm(forms.Form):
 
 class UpdateFileForm(forms.Form):
     file = forms.FileField()
-    file_description = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter file description'}))
+    filename = forms.CharField(disabled=True)
+    file_description = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter file description'}))
     file_uploaded_time = forms.DateTimeField(disabled=True)
     file_updated_time = forms.DateTimeField(disabled=True)
 

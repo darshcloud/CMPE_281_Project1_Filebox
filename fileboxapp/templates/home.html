@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Upload File</title>
     <style>
         table, th, td {
         border: 1px solid;
@@ -14,8 +14,17 @@
 </head>
 <body>
 <div align="center">
+    {% block content %}
+    {% if request.COOKIES.token != None %}
+        Hi {{ request.COOKIES.username }}!
+            <p><a href="{% url 'logout' %}">Log Out</a></p>
+    {% else %}
+        <p>You are not logged in</p>
+        <a href="{% url 'login' %}">Log In</a>
+    {% endif %}
+    {% endblock %}
   <h1>Please Upload the File here</h1>
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form_key.as_p }}
         <button type="submit">Upload</button>
@@ -35,14 +44,15 @@
         </thead>
         <tbody>
         <tr>
-            <!-- iterating here to retrieve dynamic values-->
-            <td>abc</td>
-            <td>def</td>
-            <td>cgh</td>
-            <td>fhoijwf</td>
-            <td>download</td>
-            <td><button type="button">Update</button></td>
-            <td><button type="button">Delete</button></td>
+            {% for filename, file_details in files_data.items %}
+            <td>{{ filename }}</td>
+            <td>{{ file_details.file_description }}</td>
+            <td>{{ file_details.created_time }}</td>
+            <td>{{ file_details.updated_time }}</td>
+            <td><a href='{{ file_details.file_url }}'>Download File</a></td>
+            <td><a href='{% url "update" file_name=filename file_desc=file_details.file_description uploaded_time=file_details.created_time updated_time=file_details.updated_time %}'>Update</a></td>
+            <td><a href='{% url "delete" file_name=filename %}'>Delete</a></td>
+            {% endfor %}
         </tr>
         </tbody>
     </table>
