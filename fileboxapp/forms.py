@@ -44,7 +44,8 @@ class RegisterForm(forms.Form):
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
-    file_description = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter file description'}))
+    file_description = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter file description',
+                                                                    'rows': 3, 'cols': 50}))
 
     def clean_file(self):
         data = self.cleaned_data['file']
@@ -56,8 +57,9 @@ class UploadFileForm(forms.Form):
 
 
 class UpdateFileForm(forms.Form):
-    file = forms.FileField()
-    file_description = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter file description'}))
+    file = forms.FileField(required=False)
+    file_description = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter file description',
+                                                                    'rows': 3, 'cols': 50}))
 
     def clean_file(self):
         data = self.cleaned_data['file']

@@ -10,8 +10,10 @@ from fileboxapp.forms import UploadFileForm
 from fileboxapp.forms import UpdateFileForm
 from filebox_frontend.settings import FILEBOX_BACKEND_SERVER
 import requests
+from django.contrib import messages
 
 FILES_URL = FILEBOX_BACKEND_SERVER + "/api/files/"
+MAX_FILE_SIZE = 10*1024*1024
 
 
 # Create your views here.
@@ -25,8 +27,11 @@ def login(request):
             }
             login_url = FILEBOX_BACKEND_SERVER + "/user/authorize/"
             login_response = requests.post(url=login_url, data=data)
-            login_response.raise_for_status()
             json_response = login_response.json()
+            if login_response.status_code != 200:
+                for key, value in json_response.items():
+                    messages.error(request, '.'.join(value))
+                return HttpResponseRedirect(reverse('login'))
             login_token = json_response.get('token')
             is_staff = json_response.get('is_staff')
             redirect_response = HttpResponseRedirect(reverse('home'))
@@ -68,11 +73,15 @@ def home(request):
             data = {
                 "file_description": form.cleaned_data['file_description']
             }
+
+            file_size = request.FILES['file'].size
+            if file_size > MAX_FILE_SIZE:
+                messages.error(request, 'Please Upload a File less than 10MB')
+                return HttpResponseRedirect(reverse('home'))
+
             headers = {
                 "Authorization": "Token " + request.COOKIES['token']
             }
-            file_size = request.FILES['file'].size
-
             upload_response = requests.post(url=FILES_URL, headers=headers, data=data, files=request.FILES)
             upload_response.raise_for_status()
             return HttpResponseRedirect(reverse('home'))
@@ -91,17 +100,26 @@ def update(request, file_name, file_desc, uploaded_time, updated_time):
     if request.method == 'POST':
         form = UpdateFileForm(request.POST, request.FILES)
         if form.is_valid():
+            file_obj = request.FILES.get('file', None)
             data = {
-                "filename": request.FILES['file'].name,
+                "filename": file_name,
                 "file_description": form.cleaned_data['file_description']
             }
+            if file_obj:
+                file_size = file_obj.size
+                if file_size > MAX_FILE_SIZE:
+                    messages.error(request, 'Please Upload a File less than 10MB')
+                    return HttpResponseRedirect(reverse('home'))
+                if file_obj.name != file_name:
+                    messages.error(request, 'Please Update a File with name {}'.format(file_name))
+                    return HttpResponseRedirect(reverse('home'))
+
             headers = {
                 "Authorization": "Token " + request.COOKIES['token']
             }
             files_get_response = requests.put(url=FILES_URL, headers=headers, data=data, files=request.FILES)
             files_get_response.raise_for_status()
             return HttpResponseRedirect(reverse('home'))
-        print(form.errors)
     else:
         form = UpdateFileForm(initial={
             'file': '',

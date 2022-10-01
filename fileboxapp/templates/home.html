@@ -3,14 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Home Upload File</title>
-    <style>
-        table, th, td {
-        border: 1px solid;
-        }
-        body{
-        background-color: coral;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -24,8 +18,8 @@
         <a href="{% url 'login' %}">Log In</a>
     {% endif %}
 
-<h2>List of files uploaded</h2>
-    <table>
+<h2>List Of Files Uploaded</h2>
+    <table class="table table-bordered">
         <thead>
         <tr>
             <th>First Name</th>
@@ -65,14 +59,21 @@
         <a href="{% url 'login' %}">Log In</a>
     {% endif %}
 
-  <h1>Please Upload Your File Here</h1>
-    <form action="" method="post" enctype="multipart/form-data">
+  <h2>Please Upload Your File Here</h2>
+    <form action="" method="post" enctype="multipart/form-data" class="post-form">
         {% csrf_token %}
         {{ form_key.as_p }}
-        <button type="submit">Upload</button>
+        <button type="submit" class="btn btn-primary">Upload</button>
     </form>
-    <h2>List Of Files Uploaded</h2>
-    <table>
+    <br/>
+    {% for message in messages %}
+    <div align="center" class="alert alert-danger alert-dismissible fade show" role="alert">
+           {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    <h3>List Of Files Uploaded</h3>
+    <table class="table table-bordered">
         <thead>
         <tr>
             <th>First Name</th>
