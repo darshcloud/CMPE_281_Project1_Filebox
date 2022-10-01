@@ -1,6 +1,7 @@
 import os
 
 from django.shortcuts import render
+from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -9,6 +10,8 @@ from backendapp.filebox_s3_storage import FileStorage
 from backendapp.models import Files
 from datetime import datetime
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 
 
 # Create your views here.
@@ -27,6 +30,19 @@ class RegisterUserView(APIView):
                          'message': 'User Registered Successfully'})
 
 
+class CustomLoginView(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'is_staff': user.is_staff
+        })
+
+
 class FilesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated]
@@ -42,8 +58,9 @@ class FilesView(APIView):
         file_storage = FileStorage()
         file_details = Files(
             file_key=file_path_in_bucket,
+            file_name=file_obj.name,
             username=username,
-            file_description=file_description,
+            file_description=file_description
         )
         file_details.save()
         if not file_storage.exists(file_path_in_bucket):  # avoid overwriting existing file
@@ -67,14 +84,24 @@ class FilesView(APIView):
     def get(self, request):
         username = request.user.username
         files_data = {}
-        files = Files.objects.filter(username=username)
+        if request.user.is_staff:
+            files = Files.objects.all()
+        else:
+            files = Files.objects.filter(username=username)
         file_storage = FileStorage()
+        user_dict = {}
         for file in files:
+            if file.username not in user_dict:
+                user = get_object_or_404(User, username=file.username)
+                user_dict[file.username] = user
             files_data[file.file_key.split('/')[-1]] = {
+                'file_username': file.username,
                 'file_description': file.file_description,
                 'created_time': file.created_time,
                 'updated_time': file.updated_time,
-                'file_url': file_storage.url(file.file_key)
+                'file_url': file_storage.url(file.file_key),
+                'first_name': user_dict[file.username].first_name,
+                'last_name': user_dict[file.username].last_name
             }
         return Response(files_data)
 
@@ -82,8 +109,12 @@ class FilesView(APIView):
         file_storage = FileStorage()
         username = request.user.username
         filename = request.data['filename']
-        directory_path_in_bucket = "filebox_files/{username}".format(username=username)
-        file_path_in_bucket = '/'.join([directory_path_in_bucket, filename])
+        file_user = request.data['username']
+        if request.user.is_staff:
+            file_path_in_bucket = Files.objects.get(file_name=filename, username=file_user).file_key
+        else:
+            directory_path_in_bucket = "filebox_files/{username}".format(username=username)
+            file_path_in_bucket = '/'.join([directory_path_in_bucket, filename])
         file_storage.delete(file_path_in_bucket)
         Files.objects.filter(file_key=file_path_in_bucket).delete()
         return Response({'result': 'success',

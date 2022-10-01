@@ -21,6 +21,6 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/register/', views.RegisterUserView.as_view(), name='register'),
-    path('user/authorize/', obtain_auth_token, name='authorize'),
+    path('user/authorize/', views.CustomLoginView.as_view(), name='authorize'),
     path('api/files/', views.FilesView.as_view(), name='files')
 ]

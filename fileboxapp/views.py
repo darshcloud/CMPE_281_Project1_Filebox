@@ -26,10 +26,13 @@ def login(request):
             login_url = FILEBOX_BACKEND_SERVER + "/user/authorize/"
             login_response = requests.post(url=login_url, data=data)
             login_response.raise_for_status()
-            login_token = login_response.json().get('token')
+            json_response = login_response.json()
+            login_token = json_response.get('token')
+            is_staff = json_response.get('is_staff')
             redirect_response = HttpResponseRedirect(reverse('home'))
             redirect_response.set_cookie('token', login_token)
             redirect_response.set_cookie('username', form.cleaned_data['username'])
+            redirect_response.set_cookie('isStaff', is_staff)
             return redirect_response
     else:
         form = LoginForm(initial={'username': '', 'password': ''})
@@ -68,6 +71,8 @@ def home(request):
             headers = {
                 "Authorization": "Token " + request.COOKIES['token']
             }
+            file_size = request.FILES['file'].size
+
             upload_response = requests.post(url=FILES_URL, headers=headers, data=data, files=request.FILES)
             upload_response.raise_for_status()
             return HttpResponseRedirect(reverse('home'))
@@ -87,7 +92,7 @@ def update(request, file_name, file_desc, uploaded_time, updated_time):
         form = UpdateFileForm(request.POST, request.FILES)
         if form.is_valid():
             data = {
-                "filename": form.cleaned_data['filename'],
+                "filename": request.FILES['file'].name,
                 "file_description": form.cleaned_data['file_description']
             }
             headers = {
@@ -96,20 +101,24 @@ def update(request, file_name, file_desc, uploaded_time, updated_time):
             files_get_response = requests.put(url=FILES_URL, headers=headers, data=data, files=request.FILES)
             files_get_response.raise_for_status()
             return HttpResponseRedirect(reverse('home'))
+        print(form.errors)
     else:
         form = UpdateFileForm(initial={
+            'file': '',
+            'file_description': file_desc})
+        file_data = {
             'filename': file_name,
-            'file_description': file_desc,
             'file_uploaded_time': uploaded_time,
-            'file_updated_time': updated_time})
-        context = {"form_key": form}
+            'file_updated_time': updated_time}
+        context = {"form_key": form, "file_data": file_data}
         return render(request, 'update.html', context)
 
 
-def delete(request, file_name):
+def delete(request, file_name, file_username):
     if request.method == 'GET':
         data = {
-            "filename": file_name
+            "filename": file_name,
+            "username": file_username
         }
         headers = {
             "Authorization": "Token " + request.COOKIES['token']
@@ -124,4 +133,5 @@ def logout_user(request):
     logout_response = HttpResponseRedirect(reverse('login'))
     logout_response.set_cookie('token', max_age=0)
     logout_response.set_cookie('username', max_age=0)
+    logout_response.set_cookie('isStaff', max_age=0)
     return logout_response

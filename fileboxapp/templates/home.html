@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Upload File</title>
+    <title>Home Upload File</title>
     <style>
         table, th, td {
         border: 1px solid;
@@ -13,8 +13,9 @@
     </style>
 </head>
 <body>
+
+{% if request.COOKIES.isStaff == 'True' %}
 <div align="center">
-    {% block content %}
     {% if request.COOKIES.token != None %}
         Hi {{ request.COOKIES.username }}!
             <p><a href="{% url 'logout' %}">Log Out</a></p>
@@ -22,18 +23,61 @@
         <p>You are not logged in</p>
         <a href="{% url 'login' %}">Log In</a>
     {% endif %}
-    {% endblock %}
-  <h1>Please Upload the File here</h1>
+
+<h2>List of files uploaded</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>File Name</th>
+            <th>Description</th>
+            <th>Uploaded Time</th>
+            <th>Updated Time</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for filename, file_details in files_data.items %}
+        <tr>
+            <td>{{ file_details.first_name }}</td>
+            <td>{{ file_details.last_name }}</td>
+            <td>{{ filename }}</td>
+            <td>{{ file_details.file_description }}</td>
+            <td>{{ file_details.created_time }}</td>
+            <td>{{ file_details.updated_time }}</td>
+            <td><a href='{% url "delete" file_name=filename file_username=file_details.file_username %}'>Delete</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+
+{% else %}
+<div align="center">
+
+    {% if request.COOKIES.token != None %}
+        Hi {{ request.COOKIES.username }}!
+            <p><a href="{% url 'logout' %}">Log Out</a></p>
+    {% else %}
+        <p>You are not logged in</p>
+        <a href="{% url 'login' %}">Log In</a>
+    {% endif %}
+
+  <h1>Please Upload Your File Here</h1>
     <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form_key.as_p }}
         <button type="submit">Upload</button>
     </form>
-    <h2>List of files uploaded</h2>
+    <h2>List Of Files Uploaded</h2>
     <table>
         <thead>
         <tr>
-            <th>Name</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>File Name</th>
             <th>Description</th>
             <th>Uploaded Time</th>
             <th>Updated Time</th>
@@ -43,20 +87,23 @@
         </tr>
         </thead>
         <tbody>
+        {% for filename, file_details in files_data.items %}
         <tr>
-            {% for filename, file_details in files_data.items %}
+            <td>{{ file_details.first_name }}</td>
+            <td>{{ file_details.last_name }}</td>
             <td>{{ filename }}</td>
             <td>{{ file_details.file_description }}</td>
             <td>{{ file_details.created_time }}</td>
             <td>{{ file_details.updated_time }}</td>
             <td><a href='{{ file_details.file_url }}'>Download File</a></td>
             <td><a href='{% url "update" file_name=filename file_desc=file_details.file_description uploaded_time=file_details.created_time updated_time=file_details.updated_time %}'>Update</a></td>
-            <td><a href='{% url "delete" file_name=filename %}'>Delete</a></td>
-            {% endfor %}
+            <td><a href='{% url "delete" file_name=filename file_username=file_details.file_username %}'>Delete</a></td>
         </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>
 
+{% endif %}
 </body>
 </html>

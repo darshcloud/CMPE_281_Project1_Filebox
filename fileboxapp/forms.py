@@ -57,10 +57,7 @@ class UploadFileForm(forms.Form):
 
 class UpdateFileForm(forms.Form):
     file = forms.FileField()
-    filename = forms.CharField(disabled=True)
     file_description = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter file description'}))
-    file_uploaded_time = forms.DateTimeField(disabled=True)
-    file_updated_time = forms.DateTimeField(disabled=True)
 
     def clean_file(self):
         data = self.cleaned_data['file']
@@ -68,12 +65,4 @@ class UpdateFileForm(forms.Form):
 
     def clean_file_description(self):
         data = self.cleaned_data['file_description']
-        return data
-
-    def clean_file_uploaded_time(self):
-        data = self.cleaned_data['file_uploaded_time']
-        return data
-
-    def clean_file_updated_time(self):
-        data = self.cleaned_data['file_updated_time']
         return data
