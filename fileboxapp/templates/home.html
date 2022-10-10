@@ -103,7 +103,7 @@
             <td>{{ file_details.file_description }}</td>
             <td>{{ file_details.created_time }}</td>
             <td>{{ file_details.updated_time }}</td>
-            <td><a href='{{ file_details.file_url }}' class="link-danger">Download File</a></td>
+            <td><a href='{{ file_details.file_url }}' class="link-danger" download>Download File</a></td>
             <td><a href='{% url "update" file_name=filename file_desc=file_details.file_description uploaded_time=file_details.created_time updated_time=file_details.updated_time %}' class="link-danger">Update</a></td>
             <td><a href='{% url "delete" file_name=filename file_username=file_details.file_username %}' class="link-danger">Delete</a></td>
         </tr>

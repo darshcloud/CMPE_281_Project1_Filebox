@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/register/', views.RegisterUserView.as_view(), name='register'),
     path('user/authorize/', views.CustomLoginView.as_view(), name='authorize'),
-    path('api/files/', views.FilesView.as_view(), name='files')
+    path('api/files/', views.FilesView.as_view(), name='files'),
+    path('healthcheck/', views.HealthCheckView.as_view(), name='healthcheck')
 ]

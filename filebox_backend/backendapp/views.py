@@ -1,6 +1,3 @@
-import os
-
-from django.shortcuts import render
 from rest_framework.generics import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,6 +12,11 @@ from rest_framework.authtoken.models import Token
 
 
 # Create your views here.
+class HealthCheckView(APIView):
+    def get(self):
+        return Response({'message': 'Ok'})
+
+
 class RegisterUserView(APIView):
     def post(self, request):
         username = request.data['username']
@@ -64,6 +66,11 @@ class FilesView(APIView):
         )
         file_details.save()
         if not file_storage.exists(file_path_in_bucket):  # avoid overwriting existing file
+            metadata_dict = {
+                'ContentType': 'application/octet-stream',
+                'ContentDisposition': 'attachment; filename={}'.format(file_obj.name)
+            }
+            file_storage.object_parameters.update(metadata_dict)
             file_storage.save(file_path_in_bucket, file_obj)
             file_url = file_storage.url(file_path_in_bucket)
 

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-2_o(f#gntx#o$8*yt56f38*j0)u*(ch_ei)&5p+&qx1z+zjn7r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -77,8 +77,14 @@ WSGI_APPLICATION = 'filebox_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        #'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'filebox_database',
+        'USER': os.environ.get('FILEBOX_DATABASE_USER'),
+        'PASSWORD': os.environ.get('FILEBOX_DATABASE_PASSWORD'),
+        'HOST': 'filebox-db-instance.c4kr7tv2lczj.us-west-1.rds.amazonaws.com',
+        'PORT': 5432,
     }
 }
 
@@ -129,7 +135,4 @@ REST_FRAMEWORK = {
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY_ = os.environ.get('AWS_SECRET_ACCESS_KEY')
-#AWS_DEFAULT_ACL = 'public-read'
-#CLOUDFRONT_DOMAIN = 'YOUR CLOUDFRONT DOMAIN'
-#CLOUDFRONT_ID = 'YOUR CLOUDFRONT ID'
-#AWS_S3_CUSTOM_DOMAIN = 'SAME AS YOUR CLOUD FRONT DOMAIN'
+AWS_S3_CUSTOM_DOMAIN = os.environ.get('AWS_S3_CUSTOM_DOMAIN')
