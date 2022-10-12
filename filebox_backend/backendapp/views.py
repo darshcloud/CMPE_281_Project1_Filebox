@@ -13,7 +13,7 @@ from rest_framework.authtoken.models import Token
 
 # Create your views here.
 class HealthCheckView(APIView):
-    def get(self):
+    def get(self, request):
         return Response({'message': 'Ok'})
 
 
