@@ -83,7 +83,7 @@ DATABASES = {
         'NAME': 'filebox_database',
         'USER': os.environ.get('FILEBOX_DATABASE_USER'),
         'PASSWORD': os.environ.get('FILEBOX_DATABASE_PASSWORD'),
-        'HOST': 'filebox-db-instance.c4kr7tv2lczj.us-west-1.rds.amazonaws.com',
+        'HOST': 'filebox-database-instance.c4kr7tv2lczj.us-west-1.rds.amazonaws.com',
         'PORT': 5432,
     }
 }
