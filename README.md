@@ -28,7 +28,8 @@ In today’s world, people wish to store files/photos safely in the cloud withou
 
 ## AWS Architecture of the Components 
 
-![filebox](C:/Darshini_Files/CMPE_281_Project_1_documents/CMPE_281_Project1_Filebox_Architecture.png)
+![CMPE_281_Project1_Filebox_Architecture](https://user-images.githubusercontent.com/111547793/195524234-d05ffb45-9ded-4971-8b6a-9337e5482d3f.png)
+
 
 ## Project uses the below AWS resources
 
@@ -39,8 +40,8 @@ In today’s world, people wish to store files/photos safely in the cloud withou
   The filebox application uses Application load balancer.The application load balancer distributes incoming application traffic across multiple targets<br/>
   The application uses two Application load balancers
   * filebox-frontend-load-balancer
-  * filebox-backend-load-balancer<br/>
-  
+  * filebox-backend-load-balancer<br/> 
+
 * Auto Scaling Group<br/>
   Configure auto scaling group to scale up/down based on application workload. Also, to make the application highly available. Currently the application can scale to a max instance of 2 and min instance of 1 which can be changed based on application needs.<br/>
 
@@ -106,13 +107,19 @@ In today’s world, people wish to store files/photos safely in the cloud withou
 
 Registration Page
 
+![filebox_Registration_Page](https://user-images.githubusercontent.com/111547793/195525678-6fdf1c87-e8fa-4b1a-bc6a-a17e38ee6605.png)
+
 Login Page
 
-File Upload Page
+![filebox_login_page](https://user-images.githubusercontent.com/111547793/195525738-33b9527e-1b53-4a2f-aee8-52c35c965f98.png)
 
-File Update Page
-  
+File Upload Page(Home Page)
 
+![filebox_home_page](https://user-images.githubusercontent.com/111547793/195525784-ec679365-899b-4acb-940d-c26f9500ac4b.png)
+
+File Update Page 
+
+![filebox_update_page](https://user-images.githubusercontent.com/111547793/195525815-f9686c66-7dfb-4a18-a29d-7147019d7736.png)
 
   
 
