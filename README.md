@@ -9,7 +9,10 @@ Student ID: 016668951
 http://filebox.services/
 
 ## Project Video Link
-https://drive.google.com/file/d/1mmqqDKDTgWutwRmEBeJM0XFPoloJVnVC/view?usp=sharing 
+https://drive.google.com/file/d/1mmqqDKDTgWutwRmEBeJM0XFPoloJVnVC/view?usp=sharing
+
+## Test Data
+Test data is provided in the Filebox project document which is uploaded to canvas
 
 ## Project Introduction
 
@@ -56,7 +59,7 @@ In today’s world, people wish to store files/photos safely in the cloud withou
   In Filebox Application, the lifecycle policy is defined to transition the objects/files from S3 Standard IA to S3 Glacier Deep Archive after 365 days.<br/>
 
 * S3 Transfer Acceleration<br/>
-  S3 transfer acceleration is used to allow users to upload files from all over the world.<br/>
+  S3 transfer acceleration promotes faster transfer to S3 bucket and is used to allow users to upload files from all over the world.<br/>
 
 * CloudFront<br/>
   The CloudFront is an CDN which places the contents near to the users via edge locations to reduce latency. In Filebox Application, a CloudFront Distribution is created and enabled for the file download functionality.<br/>
@@ -65,7 +68,7 @@ In today’s world, people wish to store files/photos safely in the cloud withou
   The Filebox Application uses a highly scalable and available DNS service called the Route 53 to route user requests to the filebox application. The application currently uses simple routing and can be changed to latency-based routing, weighted routing or geographical location-based routing based on the application needs.<br/>
 
 * Amazon RDS (PostgreSQL instance)<br/>
-  The Filebox Application uses an Amazon RDS (PostgreSQL instance) a highly available and storage scalable relational database service. The database is used to store user data and file metadata uploaded by the users. This application uses Single AZ as multi-AZ is not available in free tier. To achieve multi-AZ, modify the existing DB instance to multi-AZ deployment where the RDS automatically creates a standby instance in different availability zone.<br/>
+The Filebox Application uses an Amazon RDS (PostgreSQL instance) a highly available and storage scalable relational database service. The database is used to store user data and file metadata uploaded by the users. This application currently uses Single AZ as multi-AZ is not available in free tier. To achieve multi-AZ, modify the existing DB instance to the instance which enables multi-AZ deployment where the RDS automatically creates a standby instance in different availability zone.<br/>
 
 * AWS Lambda<br/>
   In Filebox Application, any delete events which occur on S3 buckets trigger a lambda function which will in turn invoke SNS topic to send notification via email to the registered recipient.<br/>
