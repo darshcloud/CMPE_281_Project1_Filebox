@@ -27,7 +27,7 @@ In today’s world, people wish to store files/photos safely in the cloud withou
 * The application allows users to update their previously uploaded files. Users can update file description and file content with the same file name.
 * Users can delete their previously uploaded files.
 * Admin view – A superuser/admin user can view all the files uploaded by all the users of the application and can manage(delete) them if necessary.
-* The backend application is API driven so it can have a future mobile API.
+* The backend of filebox application is API driven so it can have a future mobile API.
 
 ## AWS Architecture of the Components 
 
